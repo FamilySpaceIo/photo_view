@@ -16,6 +16,7 @@ import 'package:photo_view/src/controller/photo_view_scalestate_controller.dart'
 import 'package:photo_view/src/core/photo_view_gesture_detector.dart';
 import 'package:photo_view/src/photo_view_scale_state.dart';
 import 'package:photo_view/src/utils/photo_view_hero_attributes.dart';
+import 'package:preload_page_view/preload_page_view.dart';
 
 /// A type definition for a [Function] that receives a index after a page change in [PhotoViewGallery]
 typedef PhotoViewGalleryPageChangedCallback = void Function(int index);
@@ -24,7 +25,7 @@ typedef PhotoViewGalleryPageChangedCallback = void Function(int index);
 typedef PhotoViewGalleryBuilder = PhotoViewGalleryPageOptions Function(
     BuildContext context, int index);
 
-/// A [StatefulWidget] that shows multiple [PhotoView] widgets in a [PageView]
+/// A [StatefulWidget] that shows multiple [PhotoView] widgets in a [PreloadPageView]
 ///
 /// Some of [PhotoView] constructor options are passed direct to [PhotoViewGallery] constructor. Those options will affect the gallery in a whole.
 ///
@@ -116,7 +117,7 @@ class PhotoViewGallery extends StatefulWidget {
     this.scrollPhysics,
     this.scrollDirection = Axis.horizontal,
     this.customSize,
-    this.allowImplicitScrolling = false,
+    this.preloadPagesCount = 1,
   })  : itemCount = null,
         builder = null,
         super(key: key);
@@ -140,7 +141,7 @@ class PhotoViewGallery extends StatefulWidget {
     this.scrollPhysics,
     this.scrollDirection = Axis.horizontal,
     this.customSize,
-    this.allowImplicitScrolling = false,
+    this.preloadPagesCount = 1,
   })  : pageOptions = null,
         assert(itemCount != null),
         assert(builder != null),
@@ -155,7 +156,7 @@ class PhotoViewGallery extends StatefulWidget {
   /// Called to build items for the gallery when using [PhotoViewGallery.builder]
   final PhotoViewGalleryBuilder? builder;
 
-  /// [ScrollPhysics] for the internal [PageView]
+  /// [ScrollPhysics] for the internal [PreloadPageView]
   final ScrollPhysics? scrollPhysics;
 
   /// Mirror to [PhotoView.loadingBuilder]
@@ -170,11 +171,11 @@ class PhotoViewGallery extends StatefulWidget {
   /// Mirror to [PhotoView.gaplessPlayback]
   final bool gaplessPlayback;
 
-  /// Mirror to [PageView.reverse]
+  /// Mirror to [PreloadPageView.reverse]
   final bool reverse;
 
-  /// An object that controls the [PageView] inside [PhotoViewGallery]
-  final PageController? pageController;
+  /// An object that controls the [PreloadPageView] inside [PhotoViewGallery]
+  final PreloadPageController? pageController;
 
   /// An callback to be called on a page change
   final PhotoViewGalleryPageChangedCallback? onPageChanged;
@@ -188,11 +189,13 @@ class PhotoViewGallery extends StatefulWidget {
   /// Mirror to [PhotoView.customSize]
   final Size? customSize;
 
-  /// The axis along which the [PageView] scrolls. Mirror to [PageView.scrollDirection]
+  /// The axis along which the [PreloadPageView] scrolls. Mirror to [PreloadPageView.scrollDirection]
   final Axis scrollDirection;
 
-  /// When user attempts to move it to the next element, focus will traverse to the next page in the page view.
-  final bool allowImplicitScrolling;
+  /// An integer value that determines number pages that will be preloaded.
+  ///
+  /// [preloadPagesCount] value start from 0, default 1
+  final int preloadPagesCount;
 
   bool get _isBuilder => builder != null;
 
@@ -203,8 +206,8 @@ class PhotoViewGallery extends StatefulWidget {
 }
 
 class _PhotoViewGalleryState extends State<PhotoViewGallery> {
-  late final PageController _controller =
-      widget.pageController ?? PageController();
+  late final PreloadPageController _controller =
+      widget.pageController ?? PreloadPageController();
 
   void scaleStateChangedCallback(PhotoViewScaleState scaleState) {
     if (widget.scaleStateChangedCallback != null) {
@@ -228,7 +231,7 @@ class _PhotoViewGalleryState extends State<PhotoViewGallery> {
     // Enable corner hit test
     return PhotoViewGestureDetectorScope(
       axis: widget.scrollDirection,
-      child: PageView.builder(
+      child: PreloadPageView.builder(
         reverse: widget.reverse,
         controller: _controller,
         onPageChanged: widget.onPageChanged,
@@ -236,7 +239,7 @@ class _PhotoViewGalleryState extends State<PhotoViewGallery> {
         itemBuilder: _buildItem,
         scrollDirection: widget.scrollDirection,
         physics: widget.scrollPhysics,
-        allowImplicitScrolling: widget.allowImplicitScrolling,
+        preloadPagesCount: widget.preloadPagesCount,
       ),
     );
   }

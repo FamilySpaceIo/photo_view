@@ -163,7 +163,7 @@ class PhotoViewGestureRecognizer extends ScaleGestureRecognizer {
 /// if so, it will let parent gesture detectors win the gesture arena
 ///
 /// Useful when placing PhotoView inside a gesture sensitive context,
-/// such as [PageView], [Dismissible], [BottomSheet].
+/// such as [PreloadPageView], [Dismissible], [BottomSheet].
 ///
 /// Usage example:
 /// ```
