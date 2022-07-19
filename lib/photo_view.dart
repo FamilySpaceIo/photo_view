@@ -137,7 +137,7 @@ export 'src/utils/photo_view_hero_attributes.dart';
 ///
 /// To use them, pass a instance of those items on [controller] or [scaleStateController];
 ///
-/// Since those follows the standard controller pattern found in widgets like [PageView] and [ScrollView], whoever instantiates it, should [dispose] it afterwards.
+/// Since those follows the standard controller pattern found in widgets like [PreloadPageView] and [ScrollView], whoever instantiates it, should [dispose] it afterwards.
 ///
 /// Example of [controller] usage, only listening for state changes:
 ///
